@@ -105,7 +105,7 @@ echo "installing apps"
 
 
 # error
-#yum -y install gcc net-tools bsdtar zip make >/dev/null
+yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
 
