@@ -1,21 +1,10 @@
-Redirect connections from different ports at one ipv4 address to unique random ipv6 address from \64 subnetwork. Based on 3proxy
+Bộ cài proxy v6 vultr 
 
+tạo máy ảo centos 7 
 
-## Requirements
-- Centos 8
-- Ipv6 \64
+mở console lên copy lệnh bên dưới và dán vào màn hình console của server và đợi thành quả
 
-## Installation
+1. `bash <(curl -s "https://raw.githubusercontent.com/mnphuc/share-proxy/main/scripts/create3kproxy.sh")`
 
-1. `bash <(curl -s "https://raw.githubusercontent.com/mnphuc/share-proxy/main/scripts/create3kproxyfullpass.sh")`
+2. Cài xong sẽ có file dowload và mật khẩu `proxy.zip`
 
-1. After installation dowload the file `proxy.zip`
-
-## Test your proxy
-
-Install [FoxyProxy](https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-standard/) in Firefox
-![Foxy](foxyproxy.png)
-
-Open [ipv6-test.com](http://ipv6-test.com/) and check your connection
-![check ip](check_ip.png)
-"# share-proxy" 
