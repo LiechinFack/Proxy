@@ -28,14 +28,16 @@ install_3proxy() {
 
 
 gen_data() {
-    INDEX_NETWORK=-1
+    INDEX_NETWORK=0
     seq $FIRST_PORT $LAST_PORT | while read port; do
         IP_V4=$PARENT_IP4.$((START_PROXY+=1))
+        if (( $INDEX_NETWORK >= 1 )); then
+          $(get_ip_in_router $(($INDEX_NETWORK - 1)) $IP_V4)
+        fi
+        systemctl restart network
         IP_V4_PUBLIC=$(curl -4 $IP_V4 -s icanhazip.com)
         echo "$(random)/$(random)/$IP4/$port/$IP_V4/$IP_V4_PUBLIC/$((INDEX_NETWORK+=1))"
-        if (( $INDEX_NETWORK >= 1 )); then
-            $(get_ip_in_router $(($INDEX_NETWORK - 1)) $IP_V4)
-        fi
+
     done
 }
 
@@ -126,7 +128,6 @@ START_PROXY=$((START_IP4 - 1))
 
 gen_data >$WORKDIR/data.txt
 
-systemctl restart network
 
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
