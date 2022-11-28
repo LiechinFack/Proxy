@@ -68,7 +68,7 @@ users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORK_DATA})
 
 $(awk -F "/" '{print "auth strong\n" \
 "allow " $1 "\n" \
-"proxy -4 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
+"proxy -4 -n -a -p" $4 " -i" $5 " -e"$5"\n" \
 "flush\n"}' ${WORK_DATA})
 EOF
 }
