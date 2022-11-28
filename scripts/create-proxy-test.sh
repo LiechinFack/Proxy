@@ -33,9 +33,9 @@ gen_data() {
         IP_V4=$PARENT_IP4.$((START_PROXY+=1))
         if (( $INDEX_NETWORK >= 1 )); then
           $(get_ip_in_router $(($INDEX_NETWORK - 1)) $IP_V4)
+          systemctl restart network
         fi
-        systemctl restart network
-        IP_V4_PUBLIC=$(curl -4 $IP_V4 -s icanhazip.com)
+        IP_V4_PUBLIC=$(curl -4 -s icanhazip.com --interface $IP_V4)
         echo "$(random)/$(random)/$IP4/$port/$IP_V4/$IP_V4_PUBLIC/$((INDEX_NETWORK+=1))"
 
     done
