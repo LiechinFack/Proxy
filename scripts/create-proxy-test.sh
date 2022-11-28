@@ -31,7 +31,8 @@ gen_data() {
     INDEX_NETWORK=-1
     seq $FIRST_PORT $LAST_PORT | while read port; do
         IP_V4=$PARENT_IP4.$((START_PROXY+=1))
-        echo "$(random)/$(random)/$IP4/$port/$IP_V4/$IP4_PUBLIC/$((INDEX_NETWORK+=1))"
+        IP_V4_PUBLIC=$(curl -4 $IP_V4 -s icanhazip.com)
+        echo "$(random)/$(random)/$IP4/$port/$IP_V4/$IP_V4_PUBLIC/$((INDEX_NETWORK+=1))"
         if (( $INDEX_NETWORK >= 1 )); then
             $(get_ip_in_router $(($INDEX_NETWORK - 1)) $IP_V4)
         fi
