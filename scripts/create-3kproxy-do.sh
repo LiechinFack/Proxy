@@ -85,7 +85,7 @@ upload_proxy() {
 
     cp proxy.txt "$IP4".txt
 
-    curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-892127097' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument >/dev/null
+    curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-892127097' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
 
 }
 gen_data() {
@@ -107,9 +107,14 @@ EOF
 }
 echo "installing apps"
 
+echo "nhap ipv6 range "
+read IPV6_RANGE
+
+ifconfig eth0 inet6 add ${IPV6_RANGE}
+
 
 # error
-yum install -y wget >/dev/null
+yum -y install wget >/dev/null
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
@@ -119,25 +124,6 @@ WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
-echo "nhap ipv6 public"
-read ipv6_public
-
-echo "nhap ipv6 gateway"
-read ipv6_gateway
-
-echo "config network ipv6"
-cat >>/etc/sysconfig/network-scripts/ifcfg-eth0 <<EOF
-IPV6INIT=yes
-IPV6ADDR=${ipv6_public}/64
-IPV6_DEFAULTGW=${ipv6_gateway}
-IPV6_AUTOCONF=no
-DNS1=2001:4860:4860::8844
-DNS2=2001:4860:4860::8888
-DNS3=209.244.0.3
-EOF
-
-systemctl restart network
-
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 
@@ -146,25 +132,14 @@ echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 FIRST_PORT=10000
 LAST_PORT=12999
 
-
-
-
-
-echo "gen data"
 gen_data >$WORKDIR/data.txt
-echo "gen iptables"
 gen_iptables >$WORKDIR/boot_iptables.sh
-echo "gen if config"
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
-echo "set network scripts"
 echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
-echo "chmod set rc.local"
 chmod +x $WORKDIR/boot_*.sh /etc/rc.local
 
-echo "gen 3proxy"
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
-echo "set file rc.local"
 cat >>/etc/rc.local <<EOF
 systemctl start NetworkManager.service
 # ifup ${main_interface}
@@ -174,10 +149,8 @@ ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
 EOF
 
-echo "bash rc.local"
 bash /etc/rc.local
 
-eho "gen proxy file for user"
 gen_proxy_file_for_user
 
 upload_proxy
