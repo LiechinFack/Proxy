@@ -107,10 +107,7 @@ EOF
 }
 echo "installing apps"
 
-echo "nhap ipv6 range "
-read IPV6_RANGE
 
-ifconfig eth0 inet6 add ${IPV6_RANGE}
 
 
 # error
@@ -119,6 +116,16 @@ yum -y install wget >/dev/null
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
+
+
+echo "nhap ipv6 range "
+read IPV6_RANGE
+
+ifconfig eth0 inet6 add ${IPV6_RANGE}
+
+IP6_CHECK=$(curl -6 -s icanhazip.com --interface $IPV6_RANGE)
+
+echo "${IP6_CHECK}"
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
@@ -156,22 +163,5 @@ gen_proxy_file_for_user
 
 upload_proxy
 
-sleep 2m
+bash ${WORKDIR}/boot_ifconfig.sh
 
-bash /etc/rc.local
-
-sleep 2m
-
-bash /etc/rc.local
-
-sleep 1m
-
-bash /etc/rc.local
-
-sleep 1m
-
-bash /etc/rc.local
-
-sleep 1m
-
-bash /etc/rc.local
