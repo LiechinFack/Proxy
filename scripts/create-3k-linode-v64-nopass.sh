@@ -114,6 +114,7 @@ ifconfig eth0 inet6 add ${IPV6_RANGE}
 
 
 # error
+yum -y update >/dev/null
 yum -y install wget >/dev/null
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
