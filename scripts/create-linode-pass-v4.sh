@@ -109,11 +109,10 @@ sleep 5000
 "}' ${WORKDATA})
 EOF
 }
+
+
+
 echo "installing apps"
-
-
-
-
 # error
 yum -y update >/dev/null
 yum -y install wget >/dev/null
@@ -127,9 +126,6 @@ read IPV6_RANGE
 
 ifconfig eth0 inet6 add ${IPV6_RANGE}
 
-IP6_CHECK=$(curl -6 -s icanhazip.com --interface $IPV6_RANGE)
-
-echo "${IP6_CHECK}"
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
@@ -137,12 +133,15 @@ WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
 IP4=$(curl -4 -s icanhazip.com)
-IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
+IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
+echo "Nhap so ip cần tạo: "
+read COUNT
+
 FIRST_PORT=10000
-LAST_PORT=11999
+LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
 
 gen_data >$WORKDIR/data.txt
 gen_iptables >$WORKDIR/boot_iptables.sh

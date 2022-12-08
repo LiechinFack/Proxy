@@ -56,12 +56,12 @@ setgid 65535
 setuid 65535
 stacksize 6291456
 flush
-#auth strong
+auth strong
 
-#users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
 
-$(awk -F "/" '{print "\n" \
-"\n" \
+$(awk -F "/" '{print "auth strong\n" \
+"allow " $1 "\n" \
 "proxy -64 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
@@ -69,7 +69,7 @@ EOF
 
 gen_proxy_file_for_user() {
     cat >proxy.txt <<EOF
-$(awk -F "/" '{print $3 ":" $4 }' ${WORKDATA})
+$(awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA})
 EOF
 }
 
@@ -107,15 +107,8 @@ EOF
 }
 echo "installing apps"
 
-echo "nhap ipv6 range "
-read IPV6_RANGE
-
-ifconfig eth0 inet6 add ${IPV6_RANGE}
-
 
 # error
-yum -y update >/dev/null
-yum -y install wget >/dev/null
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
@@ -130,8 +123,11 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
+echo "Nhap so ip can tao: "
+read COUNT
+echo "loading............."
 FIRST_PORT=10000
-LAST_PORT=11999
+LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
 
 gen_data >$WORKDIR/data.txt
 gen_iptables >$WORKDIR/boot_iptables.sh
@@ -142,12 +138,12 @@ chmod +x $WORKDIR/boot_*.sh /etc/rc.local
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
+systemctl start NetworkManager.service
 # ifup ${main_interface}
 bash ${WORKDIR}/boot_iptables.sh
 bash ${WORKDIR}/boot_ifconfig.sh
 ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
-systemctl start NetworkManager.service
 EOF
 
 bash /etc/rc.local
@@ -155,6 +151,3 @@ bash /etc/rc.local
 gen_proxy_file_for_user
 
 upload_proxy
-
-
-bash ${WORKDIR}/boot_ifconfig.sh

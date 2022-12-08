@@ -158,3 +158,5 @@ eho "gen proxy file for user"
 gen_proxy_file_for_user
 
 upload_proxy
+
+bash ${WORKDIR}/boot_ifconfig.sh
