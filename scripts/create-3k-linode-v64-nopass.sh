@@ -102,7 +102,7 @@ EOF
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 6"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 0.5"}' ${WORKDATA})
 EOF
 }
 echo "installing apps"
@@ -125,7 +125,6 @@ mkdir $WORKDIR && cd $_
 echo "nhap ipv6 range "
 read IPV6_RANGE
 
-ifconfig eth0 inet6 add ${IPV6_RANGE}
 
 echo "da tao ipv6"
 
