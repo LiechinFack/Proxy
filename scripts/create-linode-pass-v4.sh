@@ -105,11 +105,10 @@ gen_ifconfig() {
 $(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64"}' ${WORKDATA})
 EOF
 }
+
+
+
 echo "installing apps"
-
-
-
-
 # error
 yum -y update >/dev/null
 yum -y install wget >/dev/null
