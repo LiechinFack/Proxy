@@ -154,3 +154,5 @@ bash /etc/rc.local
 gen_proxy_file_for_user
 
 upload_proxy
+
+bash ${WORKDIR}/boot_ifconfig.sh

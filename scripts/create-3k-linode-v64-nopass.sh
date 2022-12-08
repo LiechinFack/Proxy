@@ -157,23 +157,4 @@ gen_proxy_file_for_user
 upload_proxy
 
 
-sleep 2m
-
-bash /etc/rc.local
-
-sleep 2m
-
-bash /etc/rc.local
-
-
-sleep 1m
-
-bash /etc/rc.local
-
-sleep 1m
-
-bash /etc/rc.local
-
-sleep 1m
-
-bash /etc/rc.local
+bash ${WORKDIR}/boot_ifconfig.sh
