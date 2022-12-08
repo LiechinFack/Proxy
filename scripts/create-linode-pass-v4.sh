@@ -123,9 +123,6 @@ read IPV6_RANGE
 
 ifconfig eth0 inet6 add ${IPV6_RANGE}
 
-IP6_CHECK=$(curl -6 -s icanhazip.com --interface $IPV6_RANGE)
-
-echo "${IP6_CHECK}"
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
