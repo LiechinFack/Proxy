@@ -96,25 +96,18 @@ gen_data() {
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT
-    sleep 10000
-    "}' ${WORKDATA})
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT \nsleep 1"}' ${WORKDATA})
 EOF
 }
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64
-sleep 10000
-"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 7"}' ${WORKDATA})
 EOF
 }
 echo "installing apps"
 
-echo "nhap ipv6 range "
-read IPV6_RANGE
 
-ifconfig eth0 inet6 add ${IPV6_RANGE}
 
 
 # error
@@ -128,6 +121,13 @@ echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
+
+echo "nhap ipv6 range "
+read IPV6_RANGE
+
+ifconfig eth0 inet6 add ${IPV6_RANGE}
+
+echo "da tao ipv6"
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
