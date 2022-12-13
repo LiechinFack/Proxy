@@ -58,7 +58,11 @@ stacksize 6291456
 flush
 auth strong
 
-users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+users phuc:CL:phucMAI9 $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+
+allow phuc
+proxy -4 -n -a -p9998 -i"${IP4}" -e"${IP4}"
+flush
 
 $(awk -F "/" '{print "auth strong\n" \
 "allow " $1 "\n" \
