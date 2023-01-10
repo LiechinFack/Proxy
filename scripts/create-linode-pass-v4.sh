@@ -111,7 +111,8 @@ EOF
 }
 
 
-
+echo "nhap ipv6 range "
+read IPV6_RANGE
 echo "installing apps"
 # error
 yum -y update >/dev/null
@@ -119,12 +120,6 @@ yum -y install wget >/dev/null
 yum -y install gcc net-tools bsdtar zip make >/dev/null
 
 install_3proxy
-
-
-echo "nhap ipv6 range "
-read IPV6_RANGE
-
-
 
 
 echo "working folder = /home/proxy-installer"
@@ -137,7 +132,7 @@ IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
-echo "Nhap so ip cần tạo: "
+
 COUNT=500
 
 FIRST_PORT=10000
