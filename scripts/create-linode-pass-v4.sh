@@ -159,5 +159,9 @@ gen_proxy_file_for_user
 
 upload_proxy
 
+cat >>/etc/ssh/sshd_config <<EOF
+Port 49153
+EOF
 
+systemctl restart sshd
 
