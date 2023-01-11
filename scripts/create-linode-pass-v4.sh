@@ -114,11 +114,14 @@ EOF
 echo "nhap ipv6 range "
 read IPV6_RANGE
 echo "installing apps"
+sleep 50
 # error
 yum -y update >/dev/null
+sleep 50
 yum -y install wget >/dev/null
+sleep 50
 yum -y install gcc net-tools bsdtar zip make >/dev/null
-
+sleep 50
 install_3proxy
 
 
@@ -132,18 +135,18 @@ IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
-
+sleep 50
 COUNT=500
 
 FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
-
+sleep 50
 gen_data >$WORKDIR/data.txt
-
+sleep 50
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
 chmod +x $WORKDIR/boot_*.sh /etc/rc.local
-
+sleep 50
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
@@ -153,11 +156,11 @@ ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
 EOF
 
-sleep 20
+sleep 50
 bash /etc/rc.local
-
+sleep 50
 gen_proxy_file_for_user
-
+sleep 50
 upload_proxy
 
 cat >>/etc/ssh/sshd_config <<EOF
