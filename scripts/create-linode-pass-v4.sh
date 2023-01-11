@@ -106,7 +106,7 @@ EOF
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 0.4"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 1"}' ${WORKDATA})
 EOF
 }
 
