@@ -162,9 +162,9 @@ gen_proxy_file_for_user
 sleep 10
 upload_proxy
 
-cat >>/etc/ssh/sshd_config <<EOF
-Port 49153
-EOF
-
-systemctl restart sshd
+#cat >>/etc/ssh/sshd_config <<EOF
+#Port 49153
+#EOF
+#
+#systemctl restart sshd
 
