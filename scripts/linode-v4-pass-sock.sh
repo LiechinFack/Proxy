@@ -79,13 +79,13 @@ EOF
 
 upload_proxy() {
     cd $WORKDIR
-    local PASS=$(random)
-    zip --password $PASS proxy.zip proxy.txt
-    URL=$(curl -F "file=@proxy.zip" https://file.io)
-
-    echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
-    echo "Download zip archive from: ${URL}"
-    echo "Password: ${PASS}"
+#    local PASS=$(random)
+#    zip --password $PASS proxy.zip proxy.txt
+#    URL=$(curl -F "file=@proxy.zip" https://file.io)
+#
+#    echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
+#    echo "Download zip archive from: ${URL}"
+#    echo "Password: ${PASS}"
 
     cp proxy.txt "$IP4".txt
 
@@ -100,31 +100,29 @@ gen_data() {
 
 gen_iptables() {
     cat <<EOF
-    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT \nsleep 1"}' ${WORKDATA})
+    $(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT \n"}' ${WORKDATA})
 EOF
 }
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 0.1"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig '$main_interface' inet6 add " $5 "/64 \nsleep 1"}' ${WORKDATA})
 EOF
 }
 
 
-
-echo "installing apps"
-# error
-yum -y update >/dev/null
-yum -y install wget >/dev/null
-yum -y install gcc net-tools bsdtar zip make >/dev/null
-
-install_3proxy
-
-
 echo "nhap ipv6 range "
 read IPV6_RANGE
-
-
+echo "installing apps"
+sleep 10
+# error
+yum -y update >/dev/null
+sleep 10
+yum -y install wget >/dev/null
+sleep 10
+yum -y install gcc net-tools bsdtar zip make >/dev/null
+sleep 10
+install_3proxy
 
 
 echo "working folder = /home/proxy-installer"
@@ -137,18 +135,18 @@ IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
-echo "Nhap so ip cần tạo: "
-read COUNT
+sleep 10
+COUNT=500
 
 FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
-
+sleep 10
 gen_data >$WORKDIR/data.txt
-
+sleep 10
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 echo NM_CONTROLLED="no" >> /etc/sysconfig/network-scripts/ifcfg-${main_interface}
 chmod +x $WORKDIR/boot_*.sh /etc/rc.local
-
+sleep 10
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
@@ -159,10 +157,14 @@ EOF
 
 sleep 10
 bash /etc/rc.local
-
+sleep 10
 gen_proxy_file_for_user
-
+sleep 10
 upload_proxy
 
-
+#cat >>/etc/ssh/sshd_config <<EOF
+#Port 49153
+#EOF
+#
+#systemctl restart sshd
 
