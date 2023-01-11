@@ -147,12 +147,13 @@ chmod +x $WORKDIR/boot_*.sh /etc/rc.local
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
+systemctl start NetworkManager.service
 bash ${WORKDIR}/boot_ifconfig.sh &
 ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
 EOF
 
-sleep 10
+sleep 20
 bash /etc/rc.local
 
 gen_proxy_file_for_user
