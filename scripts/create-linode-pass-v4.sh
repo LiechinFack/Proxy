@@ -79,13 +79,13 @@ EOF
 
 upload_proxy() {
     cd $WORKDIR
-    local PASS=$(random)
-    zip --password $PASS proxy.zip proxy.txt
-    URL=$(curl -F "file=@proxy.zip" https://file.io)
-
-    echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
-    echo "Download zip archive from: ${URL}"
-    echo "Password: ${PASS}"
+#    local PASS=$(random)
+#    zip --password $PASS proxy.zip proxy.txt
+#    URL=$(curl -F "file=@proxy.zip" https://file.io)
+#
+#    echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
+#    echo "Download zip archive from: ${URL}"
+#    echo "Password: ${PASS}"
 
     cp proxy.txt "$IP4".txt
 
@@ -150,7 +150,6 @@ sleep 50
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
-systemctl start NetworkManager.service
 bash ${WORKDIR}/boot_ifconfig.sh &
 ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
