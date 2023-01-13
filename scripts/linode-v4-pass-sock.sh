@@ -136,7 +136,7 @@ IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
 sleep 10
-COUNT=500
+COUNT=1000
 
 FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
