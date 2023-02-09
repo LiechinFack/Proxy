@@ -3,7 +3,10 @@ random() {
 	tr </dev/urandom -dc A-Za-z0-9 | head -c5
 	echo
 }
-
+random_number(){
+  tr </dev/urandom -dc 1-9 | head -c2
+  echo
+}
 array=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
 main_interface=$(ip route get 8.8.8.8 | awk -- '{printf $5}')
 
@@ -82,8 +85,9 @@ upload_proxy() {
 
 }
 gen_data() {
+    port_random=10000;
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$(random)/$(random)/$IP4/$port/$(gen64 $IP6)"
+        echo "$(random)/$(random)/$IP4/$((port_random+=$(random_number)))/$(gen64 $IP6)"
     done
 }
 
@@ -101,7 +105,8 @@ EOF
 echo "installing apps"
 
 
-
+echo "nhap ipv6 range "
+read IPV6_RANGE
 
 # error
 yum -y update >/dev/null
@@ -115,8 +120,7 @@ WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
 mkdir $WORKDIR && cd $_
 
-echo "nhap ipv6 range "
-read IPV6_RANGE
+
 
 
 echo "da tao ipv6"
@@ -126,8 +130,8 @@ IP6=$(echo "${IPV6_RANGE}" | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
-echo "Nhap so ip cần tạo: "
-read COUNT
+
+COUNT=1000
 
 FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
